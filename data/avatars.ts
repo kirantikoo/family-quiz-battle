@@ -28,10 +28,6 @@ export const avatars = [
 
   // Humans
   {
-    id: "girl-green",
-    value: "/avatars/avatar-girl-green-3d.png",
-  },
-  {
     id: "geek-boy",
     value: "/avatars/avatar-geek-boy-3d.png",
   },
@@ -42,10 +38,6 @@ export const avatars = [
   {
     id: "princess-girl",
     value: "/avatars/avatar-princess-girl-3d.png",
-  },
-  {
-    id: "scientist",
-    value: "/avatars/avatar-scientist-3d.png",
   },
   {
     id: "grandpa",
@@ -86,10 +78,6 @@ export const avatars = [
     value: "/avatars/avatar-cyclops-3d.png",
   },
   {
-    id: "monster-purple",
-    value: "/avatars/avatar-monster-purple-3d.png",
-  },
-  {
     id: "monster-blue",
     value: "/avatars/avatar-monster-blue-3d.png",
   },
@@ -121,11 +109,7 @@ export const avatars = [
     id: "pirate",
     value: "/avatars/avatar-pirate-3d.png",
   },
-  {
-    id: "cute-alien",
-    value: "/avatars/avatar-cute-alien-3d.png",
-  },
-
+  
   // Adventure
   {
     id: "mermaid",
@@ -135,30 +119,10 @@ export const avatars = [
     id: "football-player",
     value: "/avatars/avatar-football-player-3d.png",
   },
-  {
-    id: "racer",
-    value: "/avatars/avatar-racer-3d.png",
-  },
-  {
-    id: "ninja-black",
-    value: "/avatars/avatar-ninja-black-3d.png",
-  },
-
   // Cute
   {
     id: "octopus",
     value: "/avatars/avatar-octopus-3d.png",
   },
-  {
-    id: "mermaid",
-    value: "/avatars/avatar-mermaid-3d.png",
-  },
-  {
-    id: "cyclops-purple",
-    value: "/avatars/avatar-cyclops-purple-3d.png",
-  },
-  {
-    id: "cyclops-mini",
-    value: "/avatars/avatar-cyclops-mini-3d.png",
-  },
+   
 ];
