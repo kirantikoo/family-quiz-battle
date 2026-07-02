@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -24,6 +28,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 button,
