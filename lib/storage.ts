@@ -22,6 +22,14 @@ export interface PlayerData {
   soundEnabled: boolean;
   theme: "dark" | "light";
   notificationsEnabled: boolean;
+  voiceAssistantEnabled: boolean;
+  voiceQuestionReader: boolean;
+  voiceAnswerReader: boolean;
+  voiceFeedbackEnabled: boolean;
+  voiceCountdownEnabled: boolean;
+  aiDailyQuizEnabled: boolean;
+  familyTeamBattleEnabled: boolean;
+  achievementStoreEnabled: boolean;
   lastResultId?: string;
 }
 
@@ -81,6 +89,14 @@ function defaultPlayer(): PlayerData {
     soundEnabled: true,
     theme: "dark",
     notificationsEnabled: true,
+    voiceAssistantEnabled: false,
+    voiceQuestionReader: false,
+    voiceAnswerReader: false,
+    voiceFeedbackEnabled: false,
+    voiceCountdownEnabled: false,
+    aiDailyQuizEnabled: false,
+    familyTeamBattleEnabled: false,
+    achievementStoreEnabled: false,
     lastResultId: "",
   };
 }
@@ -141,6 +157,38 @@ function migratePlayerData(value: unknown): PlayerData {
       typeof parsed.notificationsEnabled === "boolean"
         ? parsed.notificationsEnabled
         : fallback.notificationsEnabled,
+    voiceAssistantEnabled:
+      typeof parsed.voiceAssistantEnabled === "boolean"
+        ? parsed.voiceAssistantEnabled
+        : fallback.voiceAssistantEnabled,
+    voiceQuestionReader:
+      typeof parsed.voiceQuestionReader === "boolean"
+        ? parsed.voiceQuestionReader
+        : fallback.voiceQuestionReader,
+    voiceAnswerReader:
+      typeof parsed.voiceAnswerReader === "boolean"
+        ? parsed.voiceAnswerReader
+        : fallback.voiceAnswerReader,
+    voiceFeedbackEnabled:
+      typeof parsed.voiceFeedbackEnabled === "boolean"
+        ? parsed.voiceFeedbackEnabled
+        : fallback.voiceFeedbackEnabled,
+    voiceCountdownEnabled:
+      typeof parsed.voiceCountdownEnabled === "boolean"
+        ? parsed.voiceCountdownEnabled
+        : fallback.voiceCountdownEnabled,
+    aiDailyQuizEnabled:
+      typeof parsed.aiDailyQuizEnabled === "boolean"
+        ? parsed.aiDailyQuizEnabled
+        : fallback.aiDailyQuizEnabled,
+    familyTeamBattleEnabled:
+      typeof parsed.familyTeamBattleEnabled === "boolean"
+        ? parsed.familyTeamBattleEnabled
+        : fallback.familyTeamBattleEnabled,
+    achievementStoreEnabled:
+      typeof parsed.achievementStoreEnabled === "boolean"
+        ? parsed.achievementStoreEnabled
+        : fallback.achievementStoreEnabled,
     lastResultId:
       typeof parsed.lastResultId === "string"
         ? parsed.lastResultId

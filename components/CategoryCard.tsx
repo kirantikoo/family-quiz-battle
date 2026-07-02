@@ -8,7 +8,7 @@ export default function CategoryCard({ category }: { category: Category }) {
       href={`/quiz?category=${category.id}`}
       className={`
         group relative flex min-h-[172px] cursor-pointer flex-col justify-between
-        overflow-hidden rounded-[26px] ${category.gradient} p-3.5 shadow-2xl
+        theme-on-dark overflow-hidden rounded-[26px] ${category.gradient} p-3.5 shadow-2xl
         transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]
         active:scale-95 sm:min-h-[230px] sm:rounded-[32px] sm:p-5
       `}

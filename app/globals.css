@@ -1,3 +1,4 @@
+@config "../tailwind.config.ts";
 @import "tailwindcss";
 
 html {
@@ -5,8 +6,13 @@ html {
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f8fafc;
+  --foreground: #172033;
+  --app-page-bg: radial-gradient(circle at top, #f5f3ff 0%, #eef2ff 40%, #f8fafc 100%);
+  --app-card-bg: rgba(255, 255, 255, 0.72);
+  --app-card-border: rgba(124, 58, 237, 0.16);
+  --app-muted: rgba(23, 32, 51, 0.62);
 }
 
 @theme inline {
@@ -16,11 +22,14 @@ html {
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --app-page-bg: radial-gradient(circle at top, #7c3aed 0%, #312e81 35%, #0f172a 100%);
+  --app-card-bg: rgba(255, 255, 255, 0.1);
+  --app-card-border: rgba(255, 255, 255, 0.12);
+  --app-muted: rgba(255, 255, 255, 0.62);
 }
 
 body {
@@ -29,10 +38,92 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   overflow-x: hidden;
   overscroll-behavior: none;
+  transition: background-color 240ms ease, color 240ms ease;
 }
 
 button,
 a,
 input {
   -webkit-tap-highlight-color: transparent;
+}
+
+main {
+  transition: background 240ms ease, color 240ms ease;
+}
+
+html:not(.dark) main[class*="bg-["],
+html:not(.dark) main[class*="bg-[#07001f]"] {
+  background: var(--app-page-bg) !important;
+  color: var(--foreground) !important;
+}
+
+html:not(.dark) [class~="text-white"] {
+  color: var(--foreground) !important;
+}
+
+html:not(.dark) [class~="text-white/90"],
+html:not(.dark) [class~="text-white/85"],
+html:not(.dark) [class~="text-white/80"],
+html:not(.dark) [class~="text-white/70"],
+html:not(.dark) [class~="text-white/65"],
+html:not(.dark) [class~="text-white/60"],
+html:not(.dark) [class~="text-white/55"],
+html:not(.dark) [class~="text-white/50"] {
+  color: var(--app-muted) !important;
+}
+
+html:not(.dark) [class*="bg-red-"][class~="text-white"],
+html:not(.dark) [class*="bg-purple-"][class~="text-white"],
+html:not(.dark) [class*="bg-violet-"][class~="text-white"],
+html:not(.dark) [class*="bg-fuchsia-"][class~="text-white"],
+html:not(.dark) [class*="bg-emerald-"][class~="text-white"],
+html:not(.dark) [class*="bg-slate-"][class~="text-white"],
+html:not(.dark) [class*="bg-gradient-"][class~="text-white"] {
+  color: #ffffff !important;
+}
+
+html:not(.dark) .theme-on-dark,
+html:not(.dark) .theme-on-dark [class~="text-white"],
+html:not(.dark) .theme-on-dark [class~="text-white/90"],
+html:not(.dark) .theme-on-dark [class~="text-white/85"],
+html:not(.dark) .theme-on-dark [class~="text-white/80"],
+html:not(.dark) .theme-on-dark [class~="text-white/70"],
+html:not(.dark) .theme-on-dark [class~="text-white/60"],
+html:not(.dark) .theme-on-dark [class~="text-white/50"] {
+  color: #ffffff !important;
+}
+
+html:not(.dark) [class~="bg-white/10"],
+html:not(.dark) [class~="bg-white/15"],
+html:not(.dark) [class~="bg-white/20"] {
+  background-color: rgba(255, 255, 255, 0.72) !important;
+}
+
+html:not(.dark) [class~="border-white/10"],
+html:not(.dark) [class~="border-white/15"],
+html:not(.dark) [class~="border-white/20"],
+html:not(.dark) [class~="border-white/25"] {
+  border-color: var(--app-card-border) !important;
+}
+
+html:not(.dark) [class~="backdrop-blur"],
+html:not(.dark) [class~="backdrop-blur-xl"],
+html:not(.dark) [class~="backdrop-blur-2xl"] {
+  box-shadow: 0 22px 60px rgba(79, 70, 229, 0.12);
+}
+
+html:not(.dark) nav[aria-label="Primary navigation"] > div {
+  border-color: rgba(124, 58, 237, 0.16) !important;
+  background-color: rgba(255, 255, 255, 0.86) !important;
+  box-shadow: 0 24px 60px rgba(79, 70, 229, 0.18);
+}
+
+html:not(.dark) nav[aria-label="Primary navigation"] a:not([aria-current="page"]) {
+  color: rgba(23, 32, 51, 0.68) !important;
+}
+
+html:not(.dark) header {
+  border-color: rgba(124, 58, 237, 0.16) !important;
+  background-color: rgba(255, 255, 255, 0.72) !important;
+  color: var(--foreground);
 }

@@ -2,33 +2,56 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { User } from "@supabase/supabase-js";
-import { Bell, Coins, LogIn, LogOut, UserRound, Zap } from "lucide-react";
-import { supabase } from "@/lib/supabase/client";
+import {
+  Award,
+  Bell,
+  CalendarDays,
+  Gamepad2,
+  History,
+  Home,
+  LogIn,
+  LogOut,
+  Menu,
+  Settings,
+  Trophy,
+  UserRound,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import AvatarImage from "@/components/AvatarImage";
+import { getResolvedAvatar } from "@/lib/avatar";
 import { getDisplayName } from "@/lib/getDisplayName";
 import { getPlayerData, savePlayerData, type PlayerData } from "@/lib/storage";
-import { getResolvedAvatar } from "@/lib/avatar";
-import AvatarImage from "@/components/AvatarImage";
+import { supabase } from "@/lib/supabase/client";
 
-export default function AppHeader() {
+type DrawerItem = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+};
+
+const drawerItems: DrawerItem[] = [
+  { href: "/", label: "Home", icon: Home },
+  { href: "/play", label: "Play", icon: Gamepad2 },
+  { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/profile", label: "Profile", icon: UserRound },
+  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/profile#achievements", label: "Achievements", icon: Award },
+  { href: "/quiz?daily=true", label: "Daily Challenge", icon: CalendarDays },
+  { href: "/profile#history", label: "History", icon: History },
+];
+
+function AppHeader() {
   const [user, setUser] = useState<User | null>(null);
   const [player, setPlayer] = useState<PlayerData | null>(null);
-  const [greeting, setGreeting] = useState("Hello");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const clientTimer = window.setTimeout(() => {
       setPlayer(getPlayerData());
-
-      const hour = new Date().getHours();
-
-      if (hour < 12) {
-        setGreeting("Good Morning");
-      } else if (hour < 17) {
-        setGreeting("Good Afternoon");
-      } else {
-        setGreeting("Good Evening");
-      }
     }, 0);
 
     supabase.auth.getUser().then(({ data }) => {
@@ -47,11 +70,9 @@ export default function AppHeader() {
     };
   }, []);
 
-  async function logout() {
-    await supabase.auth.signOut();
-    setUser(null);
-    window.location.href = "/";
-  }
+  const displayName = useMemo(() => getDisplayName(user, player), [player, user]);
+  const avatarUrl = useMemo(() => getResolvedAvatar(player, user), [player, user]);
+  const notificationsEnabled = player?.notificationsEnabled ?? true;
 
   function toggleNotifications() {
     const currentPlayer = player ?? getPlayerData();
@@ -64,39 +85,87 @@ export default function AppHeader() {
     savePlayerData(updatedPlayer);
   }
 
-  const displayName = getDisplayName(user, player);
-  const avatarUrl = getResolvedAvatar(player, user);
-  const stats = player ?? {
-    xp: 0,
-    coins: 0,
-    level: 1,
-    notificationsEnabled: true,
-  };
+  async function logout() {
+    await supabase.auth.signOut();
+    setUser(null);
+    setMenuOpen(false);
+    window.location.href = "/";
+  }
 
   return (
-    <header className="rounded-[28px] border border-white/15 bg-white/10 p-3 shadow-2xl backdrop-blur-xl sm:rounded-[32px] sm:p-5">
-      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-        <div className="flex min-w-0 items-center gap-2.5 sm:gap-4">
-          <Link
-            href="/"
-            aria-label="Home"
-            className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg sm:h-14 sm:w-14"
-          >
-            <Image
-              src="/logo.png"
-              alt="Family Quiz Battle"
-              width={52}
-              height={52}
-              className="h-9 w-9 object-contain sm:h-12 sm:w-12"
-              priority
-            />
-          </Link>
+    <>
+      <motion.header
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: "easeOut" }}
+        className="rounded-[28px] border border-slate-200/70 bg-white/80 px-3 py-3 text-slate-900 shadow-2xl shadow-slate-900/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 dark:text-white dark:shadow-black/20 sm:rounded-[32px] sm:px-4"
+      >
+        <div className="flex min-w-0 items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-700 shadow-lg shadow-slate-900/10 backdrop-blur transition hover:bg-slate-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-300 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+            >
+              <Menu size={22} strokeWidth={3} aria-hidden="true" />
+            </button>
 
-          <Link
-            href="/profile"
-            className="flex min-w-0 flex-1 items-center gap-3 rounded-[22px] border border-white/10 bg-white/10 px-3 py-2 shadow-inner transition hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-cyan-300 sm:rounded-[26px] sm:px-4 sm:py-3"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/15 shadow-inner sm:h-14 sm:w-14">
+            <Link
+              href="/"
+              aria-label="Family Quiz Battle home"
+              className="flex min-w-0 items-center gap-2 rounded-2xl py-1 pr-1 transition hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-300 sm:gap-3"
+            >
+              <Image
+                src="/logo.png"
+                alt=""
+                width={48}
+                height={48}
+                className="h-11 w-11 shrink-0 object-contain drop-shadow-lg"
+                priority
+              />
+              <h1 className="truncate text-base font-black leading-tight sm:text-xl">
+                Family Quiz Battle
+              </h1>
+            </Link>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <button
+              type="button"
+              onClick={toggleNotifications}
+              aria-label={
+                notificationsEnabled
+                  ? "Notifications enabled"
+                  : "Notifications disabled"
+              }
+              title={
+                notificationsEnabled
+                  ? "Notifications enabled"
+                  : "Notifications disabled"
+              }
+              className={`flex h-12 w-12 items-center justify-center rounded-full border border-white/10 shadow-lg backdrop-blur transition hover:bg-white/20 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-300 ${
+                notificationsEnabled
+                  ? "border-fuchsia-300 bg-fuchsia-400 text-slate-950 shadow-fuchsia-500/25"
+                  : "border-slate-200 bg-slate-100 text-slate-700 shadow-slate-900/10 hover:bg-slate-200 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+              }`}
+            >
+              <Bell size={20} strokeWidth={3} aria-hidden="true" />
+            </button>
+
+            <Link
+              href="/settings"
+              aria-label="Open settings"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-700 shadow-lg shadow-slate-900/10 backdrop-blur transition hover:bg-slate-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-300 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+            >
+              <Settings size={20} strokeWidth={3} aria-hidden="true" />
+            </Link>
+
+            <Link
+              href={user ? "/profile" : "/login"}
+              aria-label={user ? "Open profile" : "Login"}
+              className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-slate-700 shadow-lg shadow-slate-900/10 backdrop-blur transition hover:bg-slate-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-300 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+            >
               {avatarUrl ? (
                 <AvatarImage
                   src={avatarUrl}
@@ -104,96 +173,110 @@ export default function AppHeader() {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  width={52}
-                  height={52}
-                  className="h-9 w-9 object-contain sm:h-12 sm:w-12"
-                />
+                <UserRound size={20} strokeWidth={3} aria-hidden="true" />
               )}
-            </div>
-
-            <div className="min-w-0">
-              <p className="text-[11px] font-black uppercase tracking-wide text-cyan-200/80 sm:text-xs">
-                {user ? "Google Player" : greeting}
-              </p>
-
-              <h1 className="truncate text-base font-black leading-tight sm:text-2xl">
-                {displayName}
-              </h1>
-
-              <p className="mt-0.5 truncate text-xs font-bold text-white/55 sm:text-sm">
-                Level {stats.level ?? 1} • {user ? "Synced" : "Guest"}
-              </p>
-            </div>
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-[1fr_1fr_auto_auto_auto] items-center gap-2">
-          <div className="flex min-h-10 items-center justify-center gap-1.5 rounded-2xl bg-cyan-300/15 px-2 text-xs font-black text-cyan-100 sm:min-h-12 sm:px-3 sm:text-sm">
-            <Zap size={15} strokeWidth={3} aria-hidden="true" />
-            <span className="truncate">{stats.xp.toLocaleString()}</span>
-          </div>
-
-          <div className="flex min-h-10 items-center justify-center gap-1.5 rounded-2xl bg-yellow-300/15 px-2 text-xs font-black text-yellow-100 sm:min-h-12 sm:px-3 sm:text-sm">
-            <Coins size={15} strokeWidth={3} aria-hidden="true" />
-            <span className="truncate">{stats.coins.toLocaleString()}</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={toggleNotifications}
-            aria-label={
-              stats.notificationsEnabled
-                ? "Notifications enabled"
-                : "Notifications disabled"
-            }
-            title={
-              stats.notificationsEnabled
-                ? "Notifications enabled"
-                : "Notifications disabled"
-            }
-            className={`flex h-10 w-10 items-center justify-center rounded-2xl transition focus:outline-none focus:ring-2 focus:ring-cyan-300 sm:h-12 sm:w-12 ${
-              stats.notificationsEnabled
-                ? "bg-fuchsia-400 text-slate-950 shadow-lg shadow-fuchsia-500/25"
-                : "bg-white/10 text-white hover:bg-white/20"
-            }`}
-          >
-            <Bell size={17} strokeWidth={3} aria-hidden="true" />
-          </button>
-
-          {user ? (
-            <button
-              type="button"
-              onClick={logout}
-              aria-label="Logout"
-              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-500/80 text-white transition hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-cyan-300 sm:h-12 sm:w-auto sm:px-4"
-            >
-              <LogOut size={17} strokeWidth={3} aria-hidden="true" />
-              <span className="ml-2 hidden font-black sm:inline">Logout</span>
-            </button>
-          ) : (
-            <Link
-              href="/login"
-              aria-label="Login"
-              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-300 sm:h-12 sm:w-auto sm:px-4"
-            >
-              <LogIn size={17} strokeWidth={3} aria-hidden="true" />
-              <span className="ml-2 hidden font-black sm:inline">Login</span>
             </Link>
-          )}
-
-          <Link
-            href="/profile"
-            aria-label="Profile"
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-purple-700 shadow-lg transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-300 sm:h-12 sm:w-auto sm:px-4"
-          >
-            <UserRound size={17} strokeWidth={3} aria-hidden="true" />
-            <span className="ml-2 hidden font-black sm:inline">Profile</span>
-          </Link>
+          </div>
         </div>
-      </div>
-    </header>
+      </motion.header>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close menu"
+              className="fixed inset-0 z-[1000] bg-slate-950/55 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMenuOpen(false)}
+            />
+
+            <motion.aside
+              role="dialog"
+              aria-modal="true"
+              aria-label="Main menu"
+              className="fixed left-0 top-0 z-[1001] flex h-dvh w-[min(84vw,340px)] flex-col border-r border-white/10 bg-slate-950/90 p-4 text-white shadow-2xl backdrop-blur-2xl"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ duration: 0.24, ease: "easeOut" }}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Image
+                    src="/logo.png"
+                    alt="Family Quiz Battle"
+                    width={44}
+                    height={44}
+                    className="h-11 w-11 shrink-0 object-contain drop-shadow-lg"
+                  />
+                  <div className="min-w-0">
+                    <h2 className="truncate text-lg font-black">
+                      Family Quiz Battle
+                    </h2>
+                    <p className="truncate text-xs font-bold text-white/60">
+                      {displayName}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen(false)}
+                  aria-label="Close menu"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg transition hover:bg-white/20 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                >
+                  <X size={21} strokeWidth={3} aria-hidden="true" />
+                </button>
+              </div>
+
+              <nav className="mt-6 grid gap-2" aria-label="Menu navigation">
+                {drawerItems.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex min-h-12 items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 font-black transition hover:bg-white/20 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                    >
+                      <Icon size={19} strokeWidth={3} aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              <div className="mt-auto pt-6">
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="flex min-h-12 w-full items-center gap-3 rounded-2xl border border-red-300/20 bg-red-500/20 px-4 font-black text-red-100 transition hover:bg-red-500/30 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                  >
+                    <LogOut size={19} strokeWidth={3} aria-hidden="true" />
+                    <span>Logout</span>
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex min-h-12 items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 font-black transition hover:bg-white/20 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                  >
+                    <LogIn size={19} strokeWidth={3} aria-hidden="true" />
+                    <span>Login</span>
+                  </Link>
+                )}
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
+
+export default memo(AppHeader);

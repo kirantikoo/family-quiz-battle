@@ -4,27 +4,25 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
-import { getDailyChallengeQuestions } from "@/lib/dailyChallenge";
+import { getQuestions, type QuestionSource } from "@/lib/questions/getQuestions";
 import { playSound } from "@/lib/sound";
-import {
-  calculateRewards,
-  checkAnswer,
-  getRandomQuestions,
-} from "@/lib/quiz";
+import { calculateRewards, checkAnswer } from "@/lib/quiz";
+import type { QuizQuestion } from "@/types";
+
+type Difficulty = QuizQuestion["difficulty"];
 
 export default function QuizClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const category = searchParams.get("category") || "movies";
+  const category = searchParams.get("category") || "Movies";
+  const difficulty = parseDifficulty(searchParams.get("difficulty"));
+  const source = parseSource(searchParams.get("source"));
   const isDaily = searchParams.get("daily") === "true";
 
-  const [questions] = useState(
-    isDaily
-      ? getDailyChallengeQuestions(5)
-      : getRandomQuestions(category, 10)
-  );
-
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(15);
@@ -33,6 +31,48 @@ export default function QuizClient() {
   const autoAdvanceTimer = useRef<number | null>(null);
 
   const question = questions[currentQuestion];
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function prepareQuiz() {
+      setLoading(true);
+      setNotice("");
+      setCurrentQuestion(0);
+      setScore(0);
+      setSelectedAnswer(null);
+      setSubmittedAnswer(null);
+      setTimeLeft(15);
+
+      const requestedSource = isDaily ? "local" : source;
+      const quizQuestions = await getQuestions({
+        category: isDaily ? "General Knowledge" : category,
+        difficulty: isDaily ? undefined : difficulty,
+        amount: isDaily ? 5 : 10,
+        source: requestedSource,
+      });
+
+      if (cancelled) return;
+
+      setQuestions(quizQuestions);
+
+      if (source === "api" && quizQuestions.every((item) => item.source === "local")) {
+        setNotice("Online questions are unavailable, using local questions.");
+      }
+
+      if (source === "ai") {
+        setNotice("AI quizzes are Coming Soon, using local questions for now.");
+      }
+
+      setLoading(false);
+    }
+
+    prepareQuiz();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [category, difficulty, isDaily, source]);
 
   function clearAutoAdvanceTimer() {
     if (autoAdvanceTimer.current === null) return;
@@ -81,8 +121,8 @@ export default function QuizClient() {
 
     setSubmittedAnswer(selectedAnswer);
 
-    const isCorrect = checkAnswer(selectedAnswer, question.answer);
-    const finalScore = isCorrect ? score + question.points : score;
+    const isCorrect = checkAnswer(selectedAnswer, question.correctAnswer);
+    const finalScore = isCorrect ? score + getQuestionPoints(question) : score;
 
     if (isCorrect) {
       playSound("/sounds/correct.mp3");
@@ -127,10 +167,20 @@ export default function QuizClient() {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,#ffffff_0%,#eef7ff_40%,#f8fbff_100%)] px-4 text-slate-900 transition dark:bg-[radial-gradient(circle_at_top,#7C3AED_0%,#312E81_35%,#0F172A_100%)] dark:text-white">
+        <div className="rounded-[30px] border border-violet-200/70 bg-white/75 p-6 text-center font-black shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
+          Preparing your quiz...
+        </div>
+      </main>
+    );
+  }
+
   if (!question) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,#7C3AED_0%,#312E81_35%,#0F172A_100%)] px-4 text-white">
-        <div className="rounded-[30px] border border-white/10 bg-white/10 p-6 text-center shadow-2xl backdrop-blur-xl">
+      <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,#ffffff_0%,#eef7ff_40%,#f8fbff_100%)] px-4 text-slate-900 transition dark:bg-[radial-gradient(circle_at_top,#7C3AED_0%,#312E81_35%,#0F172A_100%)] dark:text-white">
+        <div className="rounded-[30px] border border-violet-200/70 bg-white/75 p-6 text-center shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
           <h1 className="text-2xl font-black">No questions found</h1>
           <Link href="/play" className="mt-4 block rounded-2xl bg-cyan-300 px-5 py-3 font-black text-slate-950">
             Go back to Play
@@ -141,14 +191,14 @@ export default function QuizClient() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,#7C3AED_0%,#312E81_35%,#0F172A_100%)] pb-44 text-white">
+    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,#ffffff_0%,#eef7ff_40%,#f8fbff_100%)] pb-44 text-slate-900 transition dark:bg-[radial-gradient(circle_at_top,#7C3AED_0%,#312E81_35%,#0F172A_100%)] dark:text-white">
       <section className="mx-auto max-w-3xl px-4 py-5 sm:px-5 sm:py-8">
         <div className="flex items-center justify-between">
-          <Link href="/play" aria-label="Back to categories" className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-2xl font-black shadow-lg backdrop-blur transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-300">
+          <Link href="/play" aria-label="Back to categories" className="flex h-11 w-11 items-center justify-center rounded-2xl border border-violet-200/70 bg-white/75 text-2xl font-black text-violet-700 shadow-lg backdrop-blur transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-300 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20">
             ←
           </Link>
 
-          <div className="rounded-full bg-white/10 px-3 py-2 text-sm font-black shadow-lg backdrop-blur sm:px-4">
+          <div className="rounded-full border border-violet-200/70 bg-white/75 px-3 py-2 text-sm font-black shadow-lg backdrop-blur dark:border-white/10 dark:bg-white/10 sm:px-4">
             Question {currentQuestion + 1}/{questions.length}
           </div>
 
@@ -166,14 +216,23 @@ export default function QuizClient() {
           />
         </div>
 
-        <div className="mt-6 rounded-[30px] border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl sm:mt-8 sm:rounded-[36px] sm:p-8">
+        {notice && (
+          <div className="mt-5 rounded-3xl border border-amber-300/50 bg-amber-100/80 p-4 text-sm font-bold text-amber-900 shadow-lg backdrop-blur-xl dark:border-amber-300/20 dark:bg-amber-300/10 dark:text-amber-100">
+            {notice}
+          </div>
+        )}
+
+        <div className="mt-6 rounded-[30px] border border-violet-200/70 bg-white/75 p-5 shadow-2xl shadow-violet-200/40 backdrop-blur-xl sm:mt-8 sm:rounded-[36px] sm:p-8 dark:border-white/10 dark:bg-white/10 dark:shadow-purple-950/30">
+          <p className="mb-4 text-center text-xs font-black uppercase tracking-widest text-violet-500 dark:text-cyan-200">
+            {question.category} • {question.difficulty} • {question.source === "api" ? "Online API" : "Local"}
+          </p>
           <h1 className="text-center text-2xl font-black leading-snug sm:text-3xl">
             {question.question}
           </h1>
 
           <div className="mt-6 space-y-3 sm:mt-8 sm:space-y-4">
             {question.options.map((option) => {
-              const isCorrect = option === question.answer;
+              const isCorrect = option === question.correctAnswer;
               const isSelected = selectedAnswer === option;
               const showCorrect = submittedAnswer && isCorrect;
 
@@ -230,4 +289,18 @@ export default function QuizClient() {
       <BottomNav />
     </main>
   );
+}
+
+function parseDifficulty(value: string | null): Difficulty {
+  return value === "medium" || value === "hard" ? value : "easy";
+}
+
+function parseSource(value: string | null): QuestionSource {
+  return value === "api" || value === "ai" ? value : "local";
+}
+
+function getQuestionPoints(question: QuizQuestion) {
+  if (question.difficulty === "hard") return 30;
+  if (question.difficulty === "medium") return 20;
+  return 10;
 }

@@ -137,9 +137,7 @@ export default function ProfilePage() {
 
           <h1 className="text-lg font-black sm:text-xl">Profile</h1>
 
-          <Link href="/settings" aria-label="Settings" className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-xl shadow-lg backdrop-blur transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-300">
-            ⚙️
-          </Link>
+          <span className="h-11 w-11" aria-hidden="true" />
         </div>
 
         <div className="mt-6 grid gap-5 sm:mt-8 sm:gap-6 lg:grid-cols-[340px_1fr]">

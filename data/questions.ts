@@ -1,4 +1,4 @@
-import type { Question } from "@/types";
+import type { Question, QuizQuestion } from "@/types";
 
 export const questions: Question[] = [
   // Movies
@@ -1020,4 +1020,118 @@ export const questions: Question[] = [
     answer: "Summer",
     points: 20,
   },
+];
+
+const CATEGORY_LABELS: Record<string, string> = {
+  general: "General Knowledge",
+  movies: "Movies",
+  music: "Music",
+  school: "Kids",
+  world: "World",
+  sports: "Sports",
+  history: "History",
+  science: "Science",
+  geography: "Geography",
+  kids: "Kids",
+};
+
+const supplementalQuestions: QuizQuestion[] = [
+  {
+    id: "animals-local-1",
+    category: "Animals",
+    difficulty: "easy",
+    question: "Which animal is known for having black and white stripes?",
+    options: ["Zebra", "Tiger", "Panda", "Horse"],
+    correctAnswer: "Zebra",
+    explanation: "Zebras have distinctive black and white stripes.",
+    source: "local",
+  },
+  {
+    id: "animals-local-2",
+    category: "Animals",
+    difficulty: "medium",
+    question: "What type of animal is a dolphin?",
+    options: ["Mammal", "Fish", "Reptile", "Bird"],
+    correctAnswer: "Mammal",
+    explanation: "Dolphins breathe air and nurse their young, so they are mammals.",
+    source: "local",
+  },
+  {
+    id: "technology-local-1",
+    category: "Technology",
+    difficulty: "easy",
+    question: "What does Wi-Fi help devices connect to?",
+    options: ["The internet", "A toaster", "A bicycle", "A pencil"],
+    correctAnswer: "The internet",
+    explanation: "Wi-Fi lets devices connect wirelessly to a network.",
+    source: "local",
+  },
+  {
+    id: "technology-local-2",
+    category: "Technology",
+    difficulty: "medium",
+    question: "What does CPU stand for?",
+    options: [
+      "Central Processing Unit",
+      "Computer Power Utility",
+      "Creative Program Unit",
+      "Central Picture Upload",
+    ],
+    correctAnswer: "Central Processing Unit",
+    explanation: "The CPU is the main processor in a computer.",
+    source: "local",
+  },
+  {
+    id: "math-local-1",
+    category: "Math",
+    difficulty: "easy",
+    question: "What is 9 + 6?",
+    options: ["13", "14", "15", "16"],
+    correctAnswer: "15",
+    explanation: "9 plus 6 equals 15.",
+    source: "local",
+  },
+  {
+    id: "math-local-2",
+    category: "Math",
+    difficulty: "medium",
+    question: "What is 7 x 8?",
+    options: ["54", "56", "58", "64"],
+    correctAnswer: "56",
+    explanation: "7 multiplied by 8 equals 56.",
+    source: "local",
+  },
+  {
+    id: "books-local-1",
+    category: "Books",
+    difficulty: "easy",
+    question: "Who wrote many books about a boy wizard named Harry Potter?",
+    options: ["J.K. Rowling", "Roald Dahl", "Dr. Seuss", "C.S. Lewis"],
+    correctAnswer: "J.K. Rowling",
+    explanation: "J.K. Rowling wrote the Harry Potter series.",
+    source: "local",
+  },
+  {
+    id: "general-local-1",
+    category: "General Knowledge",
+    difficulty: "easy",
+    question: "How many minutes are in one hour?",
+    options: ["30", "45", "60", "90"],
+    correctAnswer: "60",
+    explanation: "One hour has 60 minutes.",
+    source: "local",
+  },
+];
+
+export const localQuestions: QuizQuestion[] = [
+  ...questions.map((question): QuizQuestion => ({
+    id: question.id,
+    category: CATEGORY_LABELS[question.category] ?? question.category,
+    difficulty: question.difficulty ?? "easy",
+    question: question.question,
+    options: question.options,
+    correctAnswer: question.answer,
+    source: "local",
+  })),
+  ...supplementalQuestions,
 ];

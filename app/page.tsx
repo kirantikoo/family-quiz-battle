@@ -1,7 +1,6 @@
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import CategoryCard from "@/components/CategoryCard";
-import AppHeader from "@/components/AppHeader";
 import DailyRewardButton from "@/components/DailyRewardButton";
 import UserCard from "@/components/UserCard";
 import UserStats from "@/components/UserStats";
@@ -9,13 +8,11 @@ import { categories } from "@/data/categories";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,#8B5CF6_0%,#312E81_32%,#0F172A_100%)] pb-44 text-white">
+    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,#F5F3FF_0%,#EEF2FF_40%,#F8FAFC_100%)] pb-44 text-slate-900 dark:bg-[radial-gradient(circle_at_top_left,#8B5CF6_0%,#312E81_32%,#0F172A_100%)] dark:text-white">
       <section className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-6 md:py-8">
-        <AppHeader />
-
-        <div className="mt-5 grid items-start gap-5 sm:mt-6 sm:gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.9fr)]">
+        <div className="grid items-start gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.9fr)]">
           <div className="space-y-5 sm:space-y-6">
-            <div className="relative overflow-hidden rounded-[30px] bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-5 shadow-2xl sm:rounded-[36px] sm:p-7 md:p-10">
+            <div className="theme-on-dark relative overflow-hidden rounded-[30px] bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-5 text-white shadow-2xl sm:rounded-[36px] sm:p-7 md:p-10">
               <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/20 blur-3xl" />
               <div className="absolute bottom-0 right-6 hidden text-9xl md:block">
                 🏆
@@ -74,11 +71,11 @@ export default function HomePage() {
 
             <div>
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-black">Popular Categories</h2>
+                <h2 className="text-xl font-black text-slate-950 dark:text-white">Popular Categories</h2>
 
                 <Link
                   href="/play"
-                  className="text-sm font-bold text-purple-200"
+                  className="text-sm font-bold text-violet-700 dark:text-purple-200"
                 >
                   View All
                 </Link>
@@ -92,38 +89,38 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h2 className="text-xl font-black">Live Rooms</h2>
+              <h2 className="text-xl font-black text-slate-950 dark:text-white">Live Rooms</h2>
 
               <div className="mt-4 grid gap-3 sm:gap-4 md:grid-cols-2">
                 <Link
                   href="/rooms"
-                  className="rounded-[24px] border border-white/10 bg-white/10 p-4 shadow-xl backdrop-blur-xl sm:rounded-[28px] sm:p-5"
+                  className="rounded-[24px] border border-slate-200/70 bg-white/80 p-4 text-slate-900 shadow-xl shadow-slate-900/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 dark:text-white dark:shadow-black/20 sm:rounded-[28px] sm:p-5"
                 >
                   <div className="flex items-center justify-between">
                     <p className="font-black">Room #AB123</p>
 
-                    <span className="rounded-full bg-red-500 px-3 py-1 text-xs font-black">
+                    <span className="rounded-full bg-red-500 px-3 py-1 text-xs font-black text-white">
                       LIVE
                     </span>
                   </div>
 
-                  <p className="mt-2 text-sm text-white/60">6 / 8 Players</p>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-white/60">6 / 8 Players</p>
                   <p className="mt-4 text-2xl">👦 👧 👨 👩</p>
                 </Link>
 
                 <Link
                   href="/rooms"
-                  className="rounded-[24px] border border-white/10 bg-white/10 p-4 shadow-xl backdrop-blur-xl sm:rounded-[28px] sm:p-5"
+                  className="rounded-[24px] border border-slate-200/70 bg-white/80 p-4 text-slate-900 shadow-xl shadow-slate-900/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 dark:text-white dark:shadow-black/20 sm:rounded-[28px] sm:p-5"
                 >
                   <div className="flex items-center justify-between">
                     <p className="font-black">Room #XY456</p>
 
-                    <span className="rounded-full bg-red-500 px-3 py-1 text-xs font-black">
+                    <span className="rounded-full bg-red-500 px-3 py-1 text-xs font-black text-white">
                       LIVE
                     </span>
                   </div>
 
-                  <p className="mt-2 text-sm text-white/60">4 / 8 Players</p>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-white/60">4 / 8 Players</p>
                   <p className="mt-4 text-2xl">👴 👵 🧒 👩</p>
                 </Link>
               </div>
@@ -134,38 +131,38 @@ export default function HomePage() {
             <UserCard />
 
             <div>
-              <h2 className="text-xl font-black">Your Progress</h2>
+              <h2 className="text-xl font-black text-slate-950 dark:text-white">Your Progress</h2>
               <UserStats />
             </div>
 
-            <div className="rounded-[30px] border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl sm:rounded-[36px] sm:p-6">
+            <div className="rounded-[30px] border border-slate-200/70 bg-white/80 p-5 text-slate-900 shadow-2xl shadow-slate-900/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 dark:text-white dark:shadow-black/20 sm:rounded-[36px] sm:p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-black">Keep Climbing</h2>
+                <h2 className="text-xl font-black text-slate-950 dark:text-white">Keep Climbing</h2>
 
                 <Link
                   href="/leaderboard"
-                  className="text-sm font-bold text-purple-200"
+                  className="text-sm font-bold text-violet-700 dark:text-purple-200"
                 >
                   View
                 </Link>
               </div>
 
-              <div className="mt-5 rounded-2xl bg-white/10 p-4">
+              <div className="mt-5 rounded-2xl bg-slate-100 p-4 dark:bg-white/10">
                 <p className="font-black">Your weekly rank updates as you play.</p>
-                <p className="mt-2 text-sm text-white/60">
+                <p className="mt-2 text-sm text-slate-500 dark:text-white/60">
                   Finish quizzes, keep your streak alive, and watch your XP grow.
                 </p>
               </div>
             </div>
 
-            <div className="rounded-[30px] border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl sm:rounded-[36px] sm:p-6">
-              <h2 className="text-xl font-black">Daily Rewards 🎁</h2>
+            <div className="rounded-[30px] border border-slate-200/70 bg-white/80 p-5 text-slate-900 shadow-2xl shadow-slate-900/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 dark:text-white dark:shadow-black/20 sm:rounded-[36px] sm:p-6">
+              <h2 className="text-xl font-black text-slate-950 dark:text-white">Daily Rewards 🎁</h2>
 
               <div className="mt-5 grid grid-cols-3 gap-3">
                 {["⭐", "🪙", "🔥"].map((item, index) => (
                   <div
                     key={index}
-                    className="rounded-2xl bg-white/10 p-4 text-center text-3xl"
+                    className="rounded-2xl bg-slate-100 p-4 text-center text-3xl dark:bg-white/10"
                   >
                     {item}
                   </div>
@@ -175,10 +172,10 @@ export default function HomePage() {
               <DailyRewardButton />
             </div>
 
-            <div className="rounded-[30px] border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl sm:rounded-[36px] sm:p-6">
-              <h2 className="text-xl font-black">Coming Soon 🚀</h2>
+            <div className="rounded-[30px] border border-slate-200/70 bg-white/80 p-5 text-slate-900 shadow-2xl shadow-slate-900/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10 dark:text-white dark:shadow-black/20 sm:rounded-[36px] sm:p-6">
+              <h2 className="text-xl font-black text-slate-950 dark:text-white">Coming Soon 🚀</h2>
 
-              <div className="mt-4 space-y-3 text-sm text-white/80">
+              <div className="mt-4 space-y-3 text-sm text-slate-600 dark:text-white/80">
                 <p>🎙️ Voice Assistant</p>
                 <p>🤖 AI Daily Quiz</p>
                 <p>👨‍👩‍👧 Family Team Battle</p>
@@ -193,3 +190,4 @@ export default function HomePage() {
     </main>
   );
 }
+

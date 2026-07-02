@@ -15,8 +15,8 @@ export default function BadgeCard({
     <div
       className={`rounded-3xl p-5 text-center transition-all ${
         unlocked
-          ? "bg-gradient-to-br from-yellow-500 to-orange-500 shadow-xl"
-          : "bg-white/10 opacity-60"
+          ? "bg-gradient-to-br from-yellow-500 to-orange-500 text-white shadow-xl"
+          : "border border-slate-200/70 bg-white/80 text-slate-500 opacity-80 dark:border-white/10 dark:bg-white/10 dark:text-white/60"
       }`}
     >
       <Image
